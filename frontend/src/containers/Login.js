@@ -21,7 +21,7 @@ const Login = ({login,isAuthenticated})=> {
     const onSubmit = e => {
         e.preventDefault();
 
-        if(password.length > 6) {
+        if(password.length > 6) {   
             //then hit register action
             login(username,password);
             
@@ -30,7 +30,7 @@ const Login = ({login,isAuthenticated})=> {
     }
 
     if (isAuthenticated)
-        return <Redirect exact to='/dashboard'/>
+        return <Redirect exact to='/friends'/>
 
     return (
         <div className="container">

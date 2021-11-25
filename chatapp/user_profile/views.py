@@ -19,7 +19,7 @@ class GetUserProfileView(APIView):
             print(user_profile)
             print("CHECK CALL : ",user_profile.first_name)
             user_profile = UserProfileSerializer(user_profile)
-
+            print(user_profile.data)
             return Response({'profile':user_profile.data,'username':username})
         except:
             return Response({'error':'Something went wrong while fetchind profile data'})    

@@ -3,9 +3,12 @@ import axios from 'axios'
 
 import { LOAD_USER_PROFILE_FAIL, LOAD_USER_PROFILE_SUCCESS ,
         UPDATE_USER_PROFILE_FAIL,UPDATE_USER_PROFILE_SUCCESS,
+        GET_SEARCHED_FRIENDS_FAIL,GET_SEARCHED_FRIENDS_SUCCESS,
         } from './types'
 //To get user data
+//  const dispatch = useDispatch(function)
  export const update_user_profile = ( first_name, last_name, phone, city)=>async dispatch => {
+     console.log("yaha aya tha..")
     const config = {
         headers : {
             'Accept':'application/json',
@@ -25,7 +28,7 @@ import { LOAD_USER_PROFILE_FAIL, LOAD_USER_PROFILE_SUCCESS ,
     try {
         
         const res = await axios.put(`${process.env.REACT_APP_API_URL}/profile/update`,body,config)
-
+        
         if(res.data.profile && res.data.username) {
             dispatch({
                 type:UPDATE_USER_PROFILE_SUCCESS,
@@ -77,5 +80,4 @@ export const load_user = ()=>async dispatch => {
         })
     }
 }
-
 

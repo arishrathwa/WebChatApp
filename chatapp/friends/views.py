@@ -28,13 +28,22 @@ class StoreFriendView(APIView):
         data = self.request.data
 
         user = self.request.user
+        friendid=0
+        userid=0
         friend = data['friend_username']
-        connectionid = data['connectionid']
-       
+        try:
+            friendid = User.objects.get(user=friend).id
+            userid = User.objects.get(user=user).id
+        except:    
+            return Response({'error':'Something went wrong..'})
+        
+        connectionid = friendid+''+userid
+        
+        # After friend request acceptance
 
         try:
-            friend = Friend.objects.create(user=user,friend=friend,connectionid=connectionid)
-            friend = Friend.objects.create(user=friend,friend=user,connectionid=connectionid)
+            friend = Friend.objects.create(user=user,friendid=friendid,friend=friend,connectionid=connectionid)
+            friend = Friend.objects.create(user=friend,friendid=userid,friend=user,connectionid=connectionid)
             return Response({'success': 'Request sent successfully..'})
         except:
             return Response({'error': 'Something went wrong while sending feedback'})

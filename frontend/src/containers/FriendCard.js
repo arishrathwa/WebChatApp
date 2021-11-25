@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function FriendCard({ title, onDelete ,username }) {
+export default function FriendCard({ friend, onDelete ,username }) {
     let cardStyle = {
        
         minWidth:"15rem",
@@ -10,7 +10,7 @@ export default function FriendCard({ title, onDelete ,username }) {
 
         
         <div className="card d-flex border border-dark m-2" style={cardStyle}>
-            <div className="card-header border-success">{title}</div>
+            <div className="card-header border-success">{friend.username}</div>
             <div className="card-body text-dark">
                 <h5 className="card-title">Task</h5>
                 <p className="card-text">{}Busy</p>

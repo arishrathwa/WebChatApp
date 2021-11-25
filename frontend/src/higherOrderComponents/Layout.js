@@ -12,9 +12,14 @@ const Layout = ({ children, checkAuthenticated, load_user })=> {
         load_user(); //after authenticationChaeck status user will be loaded
     }, [])
 
+    let inputTextStyle = {
+        maxWidth:'20rem',
+        boxShadow:'none'
+    }
+
     return(
     <Fragment>
-        <Navbar/>
+        <Navbar design={inputTextStyle}/>
         {children}
     </Fragment>
     );

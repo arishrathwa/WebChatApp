@@ -14,16 +14,19 @@ import PrivateRoute from './higherOrderComponents/PrivateRoute'
 
 import { Provider } from 'react-redux';
 import store from './store' 
-
+import './styles/friends.css'
+import './styles/general.css'
 const App = () => (
     <Provider store={store}>
         <Router>
                 <Layout>
                         <Route exact path='/' component={Home}/>
+                        
                         <Route exact path='/register' component={Register}/>
                         <Route exact path='/login' component={Login}/>
-                        <PrivateRoute exact path='/dashboard' component={Dashboard}/>
                         <PrivateRoute exact path='/friends' component={Friends}/>
+                        <PrivateRoute exact path='/dashboard' component={Dashboard}/>
+                        
                         <PrivateRoute exact path="/chats" component={Chat} />
 
                 </Layout>

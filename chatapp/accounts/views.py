@@ -1,4 +1,4 @@
-from django.shortcuts import render
+
 from rest_framework.response import Response
 # it will dispatch request to appropriate handler method
 from rest_framework.views import APIView
@@ -99,6 +99,9 @@ class LogoutView(APIView):
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request, format=None):
+        data = self.request.data
+        username = data["username"]
+        print("User received : ",username)
         try:
             auth.logout(request)
             return Response({'success': 'logged out'})
@@ -148,7 +151,25 @@ class GetUsersView(APIView):
             return Response(users.data)
         else:
             return Response({'error': 'Invlalid access'})
+#TO GET PARTICULAR USERS BEING SEARCHED
 
+class GetSearchedUsersView(APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    def post(self, request, format=None):
+        data = self.request.data
+        searchItem = data["username"]
+        print("DATA : ",data)
+        try:
+            users = User.objects.filter(username__contains=searchItem).order_by(username)
+            if len(users) == 0:
+                return Response({'error':'No User Exists..'})
+                
+            users = UserSerializer(users,many=True)
+            print(users)
+            return Response({"data":users.data})
+        except:    
+            return Response({'error':'Something went wrong..'})
 # FEEDBACKS
 
 

@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'friends',
     'groups',
     'chats',
+    'bnotify',
     'groupmembers'
 ]
 

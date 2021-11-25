@@ -4,7 +4,8 @@ import { REGISTER_SUCCESS,REGISTER_FAIL,
             LOGOUT_FAIL,LOGOUT_SUCCESS,
             AUTHENTICATED_FAIL,AUTHENTICATED_SUCCESS,
             DELETE_USER_FAIL,DELETE_USER_SUCCESS,
-            FEEDBACK_SEND_FAIL,FEEDBACK_SEND_SUCCESS
+            FEEDBACK_SEND_FAIL,FEEDBACK_SEND_SUCCESS,
+            GET_SEARCHED_FRIENDS_FAIL,GET_SEARCHED_FRIENDS_SUCCESS,
         } from '../actions/types'
 
 import Cookies from 'js-cookie'
@@ -130,7 +131,7 @@ export const register = (username,password,re_password) => async dispatch => {
 } 
 
 //LOGOUT
-export const logout = () => async dispatch => {
+export const logout = (username) => async dispatch => {
     const config = {
         headers : {
             'Accept':'application/json',
@@ -138,9 +139,10 @@ export const logout = () => async dispatch => {
             'X-CSRFToken':`${Cookies.get('csrftoken')}`
         }
     };
-    
+    console.log("logout wala : ",username)
     const body = JSON.stringify({
-        'withCredentials':true
+        'withCredentials':true,
+        'username':username
     })
 
     try {
@@ -215,11 +217,12 @@ export const sendFeedback = (feedback,sender) => async dispatch => {
         }
     };
     
-    const body = JSON.stringify({feedback,sender})
+    const body = JSON.stringify({'feedback':feedback
+        ,'sender':sender})
 
     try {
         
-        const res = await axios.post(`${process.env.REACT_APP_API_URL}/accounts/login`,body,config)
+        const res = await axios.post(`${process.env.REACT_APP_API_URL}/accounts/feedback`,body,config)
 
         if(res.data.error) {
             dispatch({
@@ -227,8 +230,10 @@ export const sendFeedback = (feedback,sender) => async dispatch => {
             })
         }
         else {
+            alert(res.data.success)
             dispatch({
                 type:FEEDBACK_SEND_SUCCESS,
+                
                 // payload:res.data.username as profile is getting fetched after this
             });
             
@@ -243,3 +248,44 @@ export const sendFeedback = (feedback,sender) => async dispatch => {
     }
 
 }
+
+//GET SEARCHED USER LIST
+//GET FRIEND LIST
+export const get_searched_user_list = username =>async dispatch => {
+    console.log("aa gaya",username)
+    const config = {
+        headers : {
+            'Accept':'application/json',
+            'Content-Type':'application/json',
+            'X-CSRFToken':Cookies.get('csrftoken') 
+        }
+    };
+
+    const body = JSON.stringify({
+       'username' : username,
+    })
+
+    try {
+        
+        const res = await axios.post(`${process.env.REACT_APP_API_URL}/accounts/get_searched_users`,body,config)
+
+        if(res.data.error) {
+            dispatch({
+                type:GET_SEARCHED_FRIENDS_FAIL,
+            })
+        }
+        else {console.log("Ori : ",res.data)
+            dispatch({
+                type:GET_SEARCHED_FRIENDS_SUCCESS,
+                payload:res.data
+            
+            })
+        }
+
+    } catch (error) {
+        dispatch({
+            type:GET_SEARCHED_FRIENDS_FAIL
+        })
+    }
+}
+

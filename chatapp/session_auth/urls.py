@@ -26,6 +26,7 @@ urlpatterns = [
    path('friends/',include('friends.urls')),
    path('groups/',include('groups.urls')),
    path('chats/',include('chats.urls')),
+   path('notification/',include('bnotify.urls')),
    path('groupmembers/',include('groupmembers.urls')),
    
    

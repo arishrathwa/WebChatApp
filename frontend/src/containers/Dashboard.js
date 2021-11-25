@@ -2,6 +2,7 @@ import React,{useState,useEffect} from "react";
 import {connect} from 'react-redux'
 import { update_user_profile } from "../actions/profile";
 import { delete_account } from "../actions/auth";
+
 const Dashboard = ({
     delete_account,
     update_user_profile,
@@ -35,7 +36,7 @@ const Dashboard = ({
        });
     }, [first_name_global,last_name_global,phone_global,city_global])
 
-    const onChange = e => setFormData({...formData,[e.target.name]:e.target.value})
+    const onChange = e => setFormData({...formData,[e.target.name]:e.target.value}) 
 
     const onSubmit = e => {
         e.preventDefault();
@@ -105,7 +106,7 @@ const Dashboard = ({
 };
 
 const mapStateToProps = state => ({
-
+    username : state.profile.username,
     first_name_global:state.profile.first_name,
     last_name_global:state.profile.last_name,
     phone_global:state.profile.phone,

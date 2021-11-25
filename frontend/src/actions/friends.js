@@ -1,5 +1,6 @@
 
-import {ADD_FRIEND_FAIL, ADD_FRIEND_SUCCESS, GET_FRIENDS_FAIL,GET_FRIENDS_SUCCESS} from './types'
+import {ADD_FRIEND_FAIL, ADD_FRIEND_SUCCESS, GET_FRIENDS_FAIL,GET_FRIENDS_SUCCESS,
+        GET_SEARCHED_FRIENDS_FAIL,GET_SEARCHED_FRIENDS_SUCCESS} from './types'
 import axios from 'axios'
 
 import Cookies from 'js-cookie';
@@ -42,6 +43,46 @@ export const get_friend_list = ( username )=>async dispatch => {
         })
     }
 }
+
+//GET FRIEND LIST
+// export const get_searched_user_list = ( username )=>async dispatch => {
+//     console.log("aa gaya")
+//     const config = {
+//         headers : {
+//             'Accept':'application/json',
+//             'Content-Type':'application/json',
+//             'X-CSRFToken':Cookies.get('csrftoken') 
+//         }
+//     };
+
+//     const body = JSON.stringify({
+//        'username' : username,
+//     })
+
+//     try {
+        
+//         const res = await axios.get(`${process.env.REACT_APP_API_URL}/accounts/get_searched_users`,body,config)
+
+//         if(res.data.error) {
+//             dispatch({
+//                 type:GET_SEARCHED_FRIENDS_FAIL,
+//             })
+//         }
+//         else {
+//             dispatch({
+//                 type:GET_SEARCHED_FRIENDS_SUCCESS,
+//                 payload:res.data
+            
+//             })
+//         }
+
+//     } catch (error) {
+//         dispatch({
+//             type:GET_SEARCHED_FRIENDS_FAIL
+//         })
+//     }
+// }
+
 
 //STORE FRIEND
 

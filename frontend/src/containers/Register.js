@@ -35,6 +35,8 @@ const Register = ({register,isAuthenticated})=> {
     else if (accountCreatedStatus)
         return <Redirect exact to='/login'/>
 
+    
+
     return (
         <div className="container">
             <h1>Register for an Account</h1>

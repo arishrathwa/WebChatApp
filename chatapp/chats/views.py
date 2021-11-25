@@ -30,10 +30,15 @@ class StoreChatView(APIView):
         fakecount = data['fakecount']
         commonchatid = data['commonchatid']
         content = data["message"]
-        timestamp = datetime.datetime.now()
+        timestamp = datetime.timezone.now()
        
 
         try:
+
+            getSameMessages = Message.objects.filter(content=content)
+            getSameMessages = MessageSerializer(getSameMessages,many = True)
+            if len(getSameMessages) > 0:
+                commonchatid = getSameMessages.data[0].commonchatid
 
             latestMessage =  Message.objects.filter(commonchatid=commonchatid).order_by('-id')[:1:-1]
             if latestMessage[len(latestMessage)-1].fakecount > 5:

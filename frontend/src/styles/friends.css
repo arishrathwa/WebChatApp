@@ -1,0 +1,16 @@
+#searchbar {
+    max-width: 20rem;
+    box-shadow: none;
+}
+#searchbar:focus {
+    outline-style:none ;
+    border-top-left-radius: 25px;
+    border-bottom-left-radius: 25px;
+}
+
+#searchbtn {
+    box-shadow: none;
+}
+.form-control:focus{
+    box-shadow: none;
+}

@@ -1,6 +1,7 @@
 import React, { Fragment, useState } from "react";
 import { Link } from "react-router-dom";
-
+import { connect } from "react-redux";
+import { sendFeedback } from "../actions/auth";
 
 const Feedback = ({ sendFeedback }) => {
 
@@ -14,6 +15,8 @@ const Feedback = ({ sendFeedback }) => {
     const onSubmit = (e) => {
         e.preventDefault();
         try {
+            console.log(sender)
+            console.log(feedback)
             sendFeedback(feedback, sender)
         }
         catch (err) {
@@ -47,4 +50,4 @@ const Feedback = ({ sendFeedback }) => {
     );
 }
 
-export default Feedback;
+export default connect(null,{sendFeedback})(Feedback);

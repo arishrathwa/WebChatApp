@@ -19,6 +19,7 @@ const CSRFToken = () =>{
                 }
             }
         }
+        console.log("IN CSRF : "+cookieValue)
         return cookieValue;
     }
     
