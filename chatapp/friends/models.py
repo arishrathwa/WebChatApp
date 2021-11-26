@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 # Create your models here.
 class Friend(models.Model):
     user = models.OneToOneField(User,on_delete=models.CASCADE)
+    username = models.TextField(default="")
     friendid = models.TextField(default="")
     friend = models.CharField(max_length=30)
     connectionid = models.TextField(default="")

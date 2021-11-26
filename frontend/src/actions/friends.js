@@ -86,7 +86,7 @@ export const get_friend_list = ( username )=>async dispatch => {
 
 //STORE FRIEND
 
-export const store_friend_connection = (username,friend,connectionid)=>async dispatch => {
+export const store_friend_connection = (username,friend,connectionid="")=>async dispatch => {
     const config = {
         headers : {
             'Accept':'application/json',
@@ -97,10 +97,10 @@ export const store_friend_connection = (username,friend,connectionid)=>async dis
 
     const body = JSON.stringify({
         'user':username,
-        'friend':friend,
-        'connectionid':connectionid
+        'friend_username':friend,
+        'connectionid':connectionid,
     })
-
+    console.log("info : inreq : ",connectionid)
     try {
         
         const res = await axios.post(`${process.env.REACT_APP_API_URL}/friends/addfriend`,body,config)

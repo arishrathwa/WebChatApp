@@ -7,7 +7,7 @@ import { del_friend } from '../actions/friends'
 import '../styles/friends.css'
 import FriendCard from "./FriendCard";
 
-const Friends = ({get_searched_user_list,searchedUser,friendlist}) => {
+const Friends = ({get_searched_user_list,searchedUser,friendlist,user_name}) => {
 
     console.log("Searched User : ",searchedUser)
 
@@ -16,27 +16,52 @@ const Friends = ({get_searched_user_list,searchedUser,friendlist}) => {
     const [searchList, setsearchList] = useState([])
     const onChange = e => setSearchItem(e.target.value)
 
-    // useEffect(()=>{
-    //     setsearchList(friendlist)
-    // },[friendlist]);
+    useEffect(()=>{
+        setsearchList(friendlist)
+    },[[friendlist],searchItem,searchList]);
     
 
     const onClick = (e) => {
         // Check in friend list
+        let flag = 0;
         if(friendlist.length != 0){
              // Check in friend list
-                setsearchList(friendlist.filter(checkUsername));        
+                let list = friendlist.filter(checkUsername)
+                if(list.length != 0){    
+                    setsearchList(list); 
+                    flag = 1;
+                }
+                       
+                 
         }
-        if(searchList.length == 0 && searchedUser.length != 0 ) {
-            setsearchList(searchedUser.filter(checkUsername))
+        // Check in searched users list
+        if(searchedUser.length != 0 && flag === 0) {
+            let list = searchedUser.filter(checkUsername);
+            if(list.length != 0){    
+                setsearchList(list)
+                flag = 1;
+            }
+           
         }
         //Check all
-        if(searchList.length == 0){
+        if(flag == 0){
            get_searched_user_list(searchItem)   
         }        
     }
     const checkUsername = (user)=>{
-       return user.username.startsWith(searchItem)        
+       return user.username.includes(searchItem)        
+    }
+
+    const deleteCommonElements = (friendlist,searchedUser) =>{
+            let newList = []
+           friendlist.map((elem)=>{
+                for(let i = 0;i<searchedUser.length;i++) {
+                    if(searchedUser[i].user.username != elem.user.username){
+                         newList.push(searchedUser.user)
+                    }
+                }
+           }) 
+
     }
 
     return (
@@ -94,6 +119,7 @@ const mapStateToProps = state => {console.log(state.profile);
     groups_global: state.groups,
     searchedUser:state.friends.searchedUser,
     friendlist:state.friends.friendlist,
+    user_name:state.profile.username
     // username:state.profile.username,
     //these are the variables passed as props globally tomaintain state of application
 }}

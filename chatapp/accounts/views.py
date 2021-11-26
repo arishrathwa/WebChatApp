@@ -161,7 +161,8 @@ class GetSearchedUsersView(APIView):
         searchItem = data["username"]
         print("DATA : ",data)
         try:
-            users = User.objects.filter(username__contains=searchItem).order_by(username)
+            users = User.objects.filter(username__contains=searchItem).order_by('username')
+            print(users)
             if len(users) == 0:
                 return Response({'error':'No User Exists..'})
                 

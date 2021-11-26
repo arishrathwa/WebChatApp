@@ -268,7 +268,7 @@ export const get_searched_user_list = username =>async dispatch => {
     try {
         
         const res = await axios.post(`${process.env.REACT_APP_API_URL}/accounts/get_searched_users`,body,config)
-
+        
         if(res.data.error) {
             dispatch({
                 type:GET_SEARCHED_FRIENDS_FAIL,
