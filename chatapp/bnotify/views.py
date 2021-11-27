@@ -21,7 +21,7 @@ class StoreNotificationView(APIView):
             return Response({'success':'not friends'})
         elif requestData == "accept":
             # res = Notifications.objects.filter(sender=sender,receiver=receiver)[0].delete()
-            res = Notifications.objects.create(sender=receiver,receiver=sender,request=requestData,info="",timestamp=timestamp)
+            # res = Notifications.objects.create(sender=receiver,receiver=sender,request=requestData,info="",timestamp=timestamp)
             return Response({'success':'friends'})
                 
         try:

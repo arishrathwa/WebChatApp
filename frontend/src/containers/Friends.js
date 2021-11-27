@@ -1,25 +1,39 @@
 import React, { Fragment ,useState,useEffect} from "react";
 import { get_searched_user_list } from '../actions/auth';
 import { connect } from 'react-redux';
+import { get_friend_list } from "../actions/friends";
 import { del_friend } from '../actions/friends'
 // import { update_user_profile } from "../actions/profile";
 // import { delete_account } from "../actions/auth";
 import '../styles/friends.css'
 import FriendCard from "./FriendCard";
 
-const Friends = ({get_searched_user_list,searchedUser,friendlist,user_name}) => {
+const Friends = ({get_searched_user_list,get_friend_list,searchedUser,friendlist,user_name}) => {
 
     console.log("Searched User : ",searchedUser)
 
 
     const [searchItem, setSearchItem] = useState("")
-    const [searchList, setsearchList] = useState([])
+    const [searchList, setsearchList] = useState(friendlist)
     const onChange = e => setSearchItem(e.target.value)
 
     useEffect(()=>{
-        setsearchList(friendlist)
-    },[[friendlist],searchItem,searchList]);
+        get_friend_list()   
+    },[]);
     
+    useEffect(()=>{
+        setsearchList(friendlist)
+        friendTag()
+        console.log("DRUGS")
+    },[friendlist])
+    
+    useEffect(()=>{
+        deleteCommonElements(friendlist,searchedUser);    
+    },[searchedUser])
+
+    
+    console.log("SearchList : ",searchList)
+    console.log("FriendList : ",friendlist)
 
     const onClick = (e) => {
         // Check in friend list
@@ -30,8 +44,7 @@ const Friends = ({get_searched_user_list,searchedUser,friendlist,user_name}) => 
                 if(list.length != 0){    
                     setsearchList(list); 
                     flag = 1;
-                }
-                       
+                }           
                  
         }
         // Check in searched users list
@@ -53,16 +66,36 @@ const Friends = ({get_searched_user_list,searchedUser,friendlist,user_name}) => 
     }
 
     const deleteCommonElements = (friendlist,searchedUser) =>{
-            let newList = []
-           friendlist.map((elem)=>{
-                for(let i = 0;i<searchedUser.length;i++) {
-                    if(searchedUser[i].user.username != elem.user.username){
-                         newList.push(searchedUser.user)
-                    }
+            
+        searchedUser.map((elem)=>{
+            friendlist.map(friend=>{
+                if(friend["username"] !== elem["username"]){
+                    elem["tag"] = "not friend"
                 }
-           }) 
+                else {
+                    elem["tag"] = "friend"
+                }
 
+            })
+        })
+
+        searchedUser = searchedUser.filter((elem)=>{
+            return elem["tag"] !== "friend"
+        })
+        
+            setsearchList(friendlist.concat(searchedUser))
+                 
     }
+      
+
+    const friendTag = ()=> {
+        friendlist.map((friend)=>{
+            friend["tag"] = "friend"
+        })
+        setsearchList(friendlist)
+        console.log("FEDN ls:",friendlist)
+    }
+    
 
     return (
         <Fragment>
@@ -73,12 +106,13 @@ const Friends = ({get_searched_user_list,searchedUser,friendlist,user_name}) => 
                     <input type="text" onChange={e=>onChange(e)} id="searchbar" className="form-control " placeholder="Enter username" aria-label="Recipient's username" aria-describedby="searchbtn"/>
                     <button class="btn btn-outline-secondary btn-sm" onClick={e => onClick(e)} type="button" id="searchbtn">Search</button>
                 </div>
+                
             </form>
             
             </div>
 
-            <div className="card-group">
-                {searchedUser === undefined ? <>
+            <div className="card-group" >
+                {searchList === undefined ? <>
                     <div class="card">
                         <div class="card-header">
                             ChatApp
@@ -91,14 +125,24 @@ const Friends = ({get_searched_user_list,searchedUser,friendlist,user_name}) => 
                         </div>
                     </div>
                 </> :
-                    searchedUser.map(
-                        (myfriend) => {
-                            console.log("in card iteration")
-                            return (
-                                <FriendCard friend={myfriend} />
-                            )
-                        }
-                    )
+                     searchItem == "" ?
+                        friendlist.map(
+                            (myfriend) => {
+                                console.log("in card iteration")
+                                return (
+                                    <FriendCard tag={{"tag":"friend"}} friend={myfriend} />
+                                )
+                            }
+                        )
+                        :
+                        searchList.map(
+                            (myfriend) => {
+                                console.log("in card iteration")
+                                return (
+                                    <FriendCard tag={{"tag":"mixed"}} friend={myfriend} />
+                                )
+                            }
+                        )      
                 }
             </div>
         </Fragment>
@@ -123,7 +167,7 @@ const mapStateToProps = state => {console.log(state.profile);
     // username:state.profile.username,
     //these are the variables passed as props globally tomaintain state of application
 }}
-export default connect(mapStateToProps,{get_searched_user_list,})(Friends);
+export default connect(mapStateToProps,{get_searched_user_list,get_friend_list})(Friends);
 // export default Friends;
 /*
 /* export default connect(mapStateToProps, { del_friend })(Friends);**/

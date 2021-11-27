@@ -27,7 +27,7 @@ const App = () => (
                         <PrivateRoute exact path='/friends' component={Friends}/>
                         <PrivateRoute exact path='/dashboard' component={Dashboard}/>
                         
-                        <PrivateRoute exact path="/chats" component={Chat} />
+                        <PrivateRoute exact path="/chats/:id"  component={Chat} />
 
                 </Layout>
         </Router>    

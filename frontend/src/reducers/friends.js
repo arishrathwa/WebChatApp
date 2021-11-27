@@ -21,7 +21,7 @@ export default function (state = initialState, action) {
             return {
                 ...state,
                 friendlist:
-                    payload.data.friends
+                    payload.data
                 
             }
         case GET_SEARCHED_FRIENDS_SUCCESS:    

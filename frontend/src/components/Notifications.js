@@ -14,8 +14,9 @@ const Notification = ({notifications,username,store_friend_connection,send_notif
     console.log("Not List : ",notifyList)
     console.log("noti list : ",notifications);
     const onClick = async (e,sender,receiver,status,info)=> {
-        if(info !== "")
+        if(status == "accept" || status == "done")
             await store_friend_connection(receiver,sender,info);
+        
         console.log("info : ",info)
         if(status !== "done")
         await send_notification(sender,receiver,status,"")

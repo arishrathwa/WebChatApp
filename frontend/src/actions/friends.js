@@ -7,15 +7,15 @@ import Cookies from 'js-cookie';
 
 
 //GET FRIEND LIST
-export const get_friend_list = ( username )=>async dispatch => {
+export const get_friend_list = ()=>async dispatch => {
     const config = {
         headers : {
             'Accept':'application/json',
             'Content-Type':'application/json',
-            //'X-CSRFToken':Cookies.get('csrftoken') 
+            'X-CSRFToken':Cookies.get('csrftoken') 
         }
     };
-
+    console.log("in get friend")
     const body = JSON.stringify({
        
     })
@@ -30,9 +30,10 @@ export const get_friend_list = ( username )=>async dispatch => {
             })
         }
         else {
+            console.log(res)
             dispatch({
                 type:GET_FRIENDS_SUCCESS,
-                payload:res.data
+                payload:res.data,
             
             })
         }

@@ -14,11 +14,11 @@ class GetFriendView(APIView):
     def get(self,request,format=None):
         try:
             user = self.request.user
-
+              
             friends = Friend.objects.filter(user=user)  
 
             friends = FriendSerializer(friends,many=True)
-            return Response({'friends':friends.data})
+            return Response({'data':friends.data})
         except:
             return Response({"error":"Something went wrong"})    
          
@@ -38,12 +38,12 @@ class StoreFriendView(APIView):
               connectionid = data["connectionid"]  
         else :
             try:
-                friendid = User.objects.get(username=friend).id
+                
                 userid = User.objects.get(username=user).id
             except Exception as e:
                 print("error : ",e)    
                 return Response({'error':'Something went wrong..'})
-            
+            friendid = User.objects.get(username=friend).id
             connectionid = str(friendid)+''+str(userid)
         
         # After friend request acceptance
