@@ -15,11 +15,12 @@ const Notification = ({notifications,username,store_friend_connection,send_notif
     console.log("noti list : ",notifications);
     const onClick = async (e,sender,receiver,status,info)=> {
         if(status == "accept" || status == "done")
-            await store_friend_connection(receiver,sender,info);
-        
+            await store_friend_connection(receiver,sender,status,info);
+        else
+            await send_notification(sender,receiver,status,"")
         console.log("info : ",info)
-        if(status !== "done")
-        await send_notification(sender,receiver,status,"")
+        // if(status !== "done")
+        
 
     }
     const onDeny = async(e,sender,receiver,status)=>{
@@ -69,7 +70,7 @@ const Notification = ({notifications,username,store_friend_connection,send_notif
                         <>
                             <div class="card">
                             <div class="card-body">
-                                This is some text within a card body.
+                                No Notifications..
                             </div>
                             </div>
                                 

@@ -126,6 +126,7 @@ const Friends = ({get_searched_user_list,get_friend_list,searchedUser,friendlist
                     </div>
                 </> :
                      searchItem == "" ?
+                        
                         friendlist.map(
                             (myfriend) => {
                                 console.log("in card iteration")
@@ -137,7 +138,7 @@ const Friends = ({get_searched_user_list,get_friend_list,searchedUser,friendlist
                         :
                         searchList.map(
                             (myfriend) => {
-                                console.log("in card iteration")
+                                console.log("Searchg Iteration : ",myfriend)
                                 return (
                                     <FriendCard tag={{"tag":"mixed"}} friend={myfriend} />
                                 )

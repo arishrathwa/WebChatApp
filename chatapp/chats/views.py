@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 from .models  import Message
 from .serializers import MessageSerializer
 import datetime
+import random
 # Create your views here.
 
 class GetChatView(APIView):
@@ -39,8 +40,10 @@ class StoreChatView(APIView):
             getSameMessages = MessageSerializer(getSameMessages,many = True)
             if len(getSameMessages) > 0:
                 commonchatid = getSameMessages.data[0].commonchatid
+            else: 
+                commonchatid = random.random(1,100000,0.2)    
 
-            latestMessage =  Message.objects.filter(commonchatid=commonchatid).order_by('-id')[:1:-1]
+            latestMessage =  Message.objects.filter(commonchatid=commonchatid).order_by('-id')
             if latestMessage[len(latestMessage)-1].fakecount > 5:
                 Message.objects.filter(commonchatid=commonchatid).delete()    
 

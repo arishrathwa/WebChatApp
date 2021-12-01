@@ -10,7 +10,7 @@ class StoreNotificationView(APIView):
 
     def post(self,request,format=None):
         data = self.request.data
-        print(data)
+        print("NOTI : ",data)
         sender = data['sender']
         receiver = data['receiver']
         requestData = data['status']

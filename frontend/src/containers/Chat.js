@@ -1,73 +1,109 @@
-import React, { Fragment,useState,useEffect } from 'react'
-import { NavLink } from 'react-router-dom'
+import axios from 'axios'
+import React, { Fragment, useState, useEffect,useLayoutEffect } from 'react'
+import { connect } from 'react-redux'
+import { NavLink, Redirect } from 'react-router-dom'
 import { useLocation } from 'react-router-dom'
-export default function ChatUI({ title, onDelete,params }) {
+// import axios from 'axios'
+console.log("GREAT DEAl")
+let count = 0;
+
+
+class SocketOp {
+    
+    constructor() {
+        
+    }
+    static chatSocket = {}
+    static setChatSocket(socket) {
+        SocketOp.chatSocket = socket
+        SocketOp.chatSocket.onopen = (e)=>{
+            console.log("OPENDED SOCKET GATE");
+            SocketOp.socketState = true;
+        }
+    }
+    static socketState = false;
+    
+
+    
+} 
+
+const ChatUI = ({ title, onDelete, params })=> {
     // To access props from react routers useLocation hook is used
     const location = useLocation()
-    console.log("PARAMS : ",location.params)
-    const [friendGroup, setfriendGroup] = useState(location.params)
+    console.log("PARAMS : ", location.params)
+    const [friendGroup,setFriendGroup] = useState(location.params)
     //*************************************************************** */
 
     //*******WEB SOCKETS********************************************* */
 
-        
+    console.log("count : ",count++)
+
     const roomName = friendGroup.connectionid;
-    /****///
-    
-    class LoadOldMessagesStatus {
-        static loaded = false
-        static loadmsgcount = 1
-        static loadValue() {
-            return this.loaded;
-        }
-    }    
+    const [socketVar, setsocketVar] = useState(SocketOp.socketState)
+    console.log("Socket State : ",socketVar)
 
-    let sender ="";
-    
+    useEffect(()=>{
+        setsocketVar(!socketVar)
+    },[SocketOp.socketState])
+    //It is required as on opening websocket rerender is needed to start sending messages with latest state of component
+
+    let sender = friendGroup.username;
+
     /**/
-    let  chatSocket = new WebSocket(
-        'ws://'
-        + window.location.host
-        + '/ws/chat/'
-        + roomName
-        + '/'
-    );;
+    useLayoutEffect(()=>{
+       SocketOp.setChatSocket( 
+         new WebSocket(
+            'ws://'
+            + window.location.host
+            + '/ws/chat/'
+            + roomName
+            + '/'
+        )
+    )
+    },[]);
+
     
-    useEffect(() => {
-        
-    }, []) 
 
-    const [chatmessages, setchatmessages] = useState([])
+    const [chatmessages,setchatmessages] = useState([])
     const [textItem, settextItem] = useState("")
+    
 
-
-    const onChange = (e)=>{
+    const onChangeMsgField = (e) => {
         settextItem(e.target.value)
+        e.stopPropagation();
+    }
+    console.log("TextValue : ",textItem);
+    console.log("ChatItems : ",chatmessages)
+
+    SocketOp.chatSocket.onopen = (e)=>{
+        console.log("CHat Socket Open..")
     }
 
-
-    chatSocket.onmessage = function(e) {
+    SocketOp.chatSocket.onmessage =  (e)=> {
         const data = JSON.parse(e.data);
-        console.log(data)
+        console.log("Receiving end : ",data)
         // if(data.messagestamp == 'new' || (data.messagestamp == 'old' && !LoadOldMessagesStatus.loadValue())) {
-            setchatmessages([...chatmessages,data])
-            // if(data.sender === sender)
-                // document.querySelector('#chat-log').value += ('\t\t\t'+data.message+'\n')
-            // else    
-                //document.querySelector('#chat-log').value += (data.message + '\n');
-            
-            // if (data.messagestamp == 'old') {
-            //     LoadOldMessagesStatus.loadmsgcount = data.messagecount
-            //     if (LoadOldMessagesStatus.loadmsgcount == 1){
-            //         LoadOldMessagesStatus.loaded = true;
-            //     }
-            // }    
+        setchatmessages((chatmessages) => [...chatmessages,data])
+        // if(data.sender === sender)
+        // document.querySelector('#chat-log').value += ('\t\t\t'+data.message+'\n')
+        // else    
+        //document.querySelector('#chat-log').value += (data.message + '\n');
+
+        // if (data.messagestamp == 'old') {
+        //     LoadOldMessagesStatus.loadmsgcount = data.messagecount
+        //     if (LoadOldMessagesStatus.loadmsgcount == 1){
+        //         LoadOldMessagesStatus.loaded = true;
+        //     }
+        // }    
 
         // }
+        e.stopPropagation();
     };
+    
 
-    chatSocket.onclose = function(e) {
+    SocketOp.chatSocket.onclose = function (e) {
         console.error('Chat socket closed unexpectedly');
+        <Redirect exact to="/friends"/>
     };
 
     // document.querySelector('#chat-message-input').focus();
@@ -77,56 +113,89 @@ export default function ChatUI({ title, onDelete,params }) {
     //     }
     // };
 
-        const onclick = function(e) {
-       
+    const onClickSendMessag =  (e)=> {
+
         const message = textItem;
-        sender =   friendGroup.username;
-        chatSocket.send(JSON.stringify({
+        sender = friendGroup.username;
+
+        SocketOp.chatSocket.send(JSON.stringify({
             'message': message,
-            'sender' : sender
+            'sender': sender,
+            "connectionid":friendGroup.connectionid,
         }));
+
+        console.log("MESSAGE SENT : ",message," SENDER : ",sender);
+        e.stopPropagation();
         
-        settextItem("")
         // document.querySelector("#chat-message-sender").value = "";
     };
 
 
-    //*/*//////////////////////////////////////////////////////////////
 
-
-    //**************************************************************** */
-    
     return (
         <Fragment>
-            <div className='container-fluid p-2'>
+            <div className='container-fluid p-2 mx-auto' >
                 <nav class="navbar navbar-dark bg-primary">
                     <div class="container-fluid">
-                        <NavLink className="btn btn-light" exact to="/friends">Back</NavLink>
+                        <NavLink className="btn btn-light" onClick={()=>{SocketOp.chatSocket.close()}} exact to="/friends">Back</NavLink>
                         <h3>{friendGroup.friend}</h3>
                     </div>
-                </nav>    
+                </nav>
                 <div className='overflow-auto'>
                     {
-                        chatmessages.length !== 0?
-                            chatmessages.map((message)=>{
-                                return(
+                        chatmessages.length !== 0 ?
+                            chatmessages.map((message) => {
+                                return (
                                     <>
-                                    {message.data}
+
+                                        {
+                                         message.sender === friendGroup.username?
+                                         <>
+                                            <div className='container-fluid mx-auto d-inline-flex justify-content-end w-100' >
+                                                <div class="card  mt-1" style={{"max-width":"20rem"}}>
+                                                    <div class="card-body">
+                                                        <h5 class="card-title">{message.sender}</h5>
+                                                        <p class="card-text">{message.message}</p>
+                                                    </div>
+                                                    <button type="button" className='btn btn-sm btn-danger'>Mark Fake</button>
+                                                </div>
+                                            
+                                            </div>
+                                            <br/>
+                                         </>
+                                         :
+                                         <>
+                                         <div className='container-fluid mx-auto d-inline-flex justify-content-start w-100'>
+                                                <div class="card  mt-1 " style={{"max-width":"20rem"}}>
+                                                    
+                                                    <div class="card-body">
+                                                        <h5 class="card-title">{message.sender}</h5>
+                                                        <p class="card-text">{message.message}</p>
+                                                    </div>
+                                                    <button type="button"  className='btn btn-sm btn-danger'>Mark Fake</button>
+                                            </div>
+                                            
+                                    </div>
+                                    <br/>
+                                         </>
+                                        }
+                                       
                                     </>
                                 )
                             })
-                        :
-                        "No Messages"
+                            :
+                            "No Messages"
                     }
                     {/* CHAT COMPONENT */}
                 </div>
                 <nav class="navbar fixed-bottom navbar-light bg-light">
-                    <div class="container-fluid">
-                    <input type="text" id="chat-message-submit" onChange={(e)=>{onChange(e)}} className='form-control w-50 mx-auto' />
-                    <a class="btn btn-success mx-auto" onClick={(e)=>{onclick(e)}} href="#">Send</a>
+                    <div class="container-fluid  flex-row justify-content-center">
+                        <input type="text" id="chat-message-submit" onChange={(e) => onChangeMsgField(e) } className='form-control mw-100' />
+                        <a class="btn btn-success" onClick={(e) => onClickSendMessag(e) } href="#">Send</a>
                     </div>
                 </nav>
             </div>
         </Fragment>
     )
 }
+export default connect("",{})(ChatUI);

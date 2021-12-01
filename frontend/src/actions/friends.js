@@ -87,7 +87,7 @@ export const get_friend_list = ()=>async dispatch => {
 
 //STORE FRIEND
 
-export const store_friend_connection = (username,friend,connectionid="")=>async dispatch => {
+export const store_friend_connection = (username,friend,status,connectionid="")=>async dispatch => {
     const config = {
         headers : {
             'Accept':'application/json',
@@ -99,6 +99,7 @@ export const store_friend_connection = (username,friend,connectionid="")=>async 
     const body = JSON.stringify({
         'user':username,
         'friend_username':friend,
+        'status':status,
         'connectionid':connectionid,
     })
     console.log("info : inreq : ",connectionid)

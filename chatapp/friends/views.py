@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from rest_framework.exceptions import ErrorDetail
 from rest_framework.response import Response
 from rest_framework.views import APIView # it will dispatch request to appropriate handler method
 from rest_framework import permissions
@@ -6,6 +7,8 @@ from django.contrib.auth.models import User
 from .models  import Friend
 from .serializers import FriendSerializer
 from bnotify.models import Notifications
+import datetime
+import json
 # Create your views here.
 
 class GetFriendView(APIView):
@@ -27,36 +30,77 @@ class StoreFriendView(APIView):
 
     def post(self, request, format=None):
         data = self.request.data
-
+       
         user = self.request.user
-        friendid=0
+        
         userid=0
         friend = data['friend_username']
+        friendid = User.objects.get(username=friend).id # friend id is required in both accept and done status to add friend id in done and for making id in accept request status
+        status = data['status']
         connectionid = ""
         print("USER : ",user," => ",data)
         if data['connectionid'] != "":
               connectionid = data["connectionid"]  
         else :
-            try:
-                
-                userid = User.objects.get(username=user).id
+            try: 
+                userid = self.request.user.id
             except Exception as e:
                 print("error : ",e)    
                 return Response({'error':'Something went wrong..'})
-            friendid = User.objects.get(username=friend).id
+            
             connectionid = str(friendid)+''+str(userid)
-        
+          
         # After friend request acceptance
+        timestamp = datetime.datetime.now()
         print("CID : ",connectionid)
-        try:
-            Friend.objects.create(user=user,username=user,friendid=friendid,friend=friend,connectionid=connectionid)
-            # friend = Friend.objects.create(user=friend,username=friend,friendid=userid,friend=user,connectionid=connectionid)
-            res =  Notifications.objects.create(sender=user,receiver=friend,request="accept",info=str(connectionid))
+        print("DATA : ",data)
+        print("USER : ",user.username)
         
-            Notifications.objects.filter(sender=receiver,receiver=user,request='sent')[0].delete()
+        result = ""
+        try:
+            # Friend.objects.create(user=user,username=user.username,friendid="12",friend="Ramesh",connectionid="123")
+            
+            result = Friend.objects.create(user=user,username=user.username,friendid=friendid,friend=friend,connectionid=connectionid)
+            print("karo")
+            # friend = Friend.objects.create(user=friend,username=friend,friendid=userid,friend=user,connectionid=connectionid)
+            # Tio check for existing accept request
+            res = Notifications.objects.filter(sender=friend,receiver=user,request="accept",info=connectionid)
+            if len(res)>0:
+                res[0].delete()
+            else:    
+            # To Store Accepted Notification to notify original sender for acceptance of his/her request
+                res =  Notifications.objects.create(sender=user,receiver=friend,request=status,info=connectionid,timestamp=timestamp)
+            # Notifications.objects.create(sender=sender,receiver=receiver,request=requestData,info=info,timestamp=timestamp)
+            print("After CID")
+            res = Notifications.objects.filter(sender=friend,receiver=user,request='sent')
+            if len(res) > 0:
+                res[0].delete()
             return Response({'success': 'Request sent successfully..'})
-        except:
+        except Exception as e:
+            print("RESULT : ",result)
+            print(e)
+            print(e.__class__)
             return Response({'error': 'Something went wrong while sending feedback'})
+
+# ////////////////////////////////////////////////////////////
+# ERROR CHECK METHODS
+def get_user(user):
+    print("get user arrived..")
+    return user
+def get_user(uname):
+    print("username arrived..")
+    return uname
+def get_user(fid):
+    print("frend id arrived..")
+    return fid
+def get_user(frend):
+    print("frend arrived..")
+    return frend
+def connection_id(cid):
+    print("CID  arrived..")
+    return cid
+
+# ////////////////////////////////////////////////////////////
 
 # Check connectionid
 class CheckConnectionId(APIView):
