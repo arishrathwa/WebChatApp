@@ -83,22 +83,7 @@ class StoreFriendView(APIView):
             return Response({'error': 'Something went wrong while sending feedback'})
 
 # ////////////////////////////////////////////////////////////
-# ERROR CHECK METHODS
-def get_user(user):
-    print("get user arrived..")
-    return user
-def get_user(uname):
-    print("username arrived..")
-    return uname
-def get_user(fid):
-    print("frend id arrived..")
-    return fid
-def get_user(frend):
-    print("frend arrived..")
-    return frend
-def connection_id(cid):
-    print("CID  arrived..")
-    return cid
+
 
 # ////////////////////////////////////////////////////////////
 
